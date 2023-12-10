@@ -21,12 +21,13 @@ type User struct {
 	Password  string
 	UserType  UserType
 	ID        int64
-	balance   int64
+	balance   int64 //balance in cents
 	mu        sync.Mutex
 }
 
 func NewUser(initialBalance int64) *User {
-	return &User{balance: initialBalance}
+	now := time.Now().UTC()
+	return &User{balance: initialBalance, CreatedAt: now, UpdatedAt: now}
 }
 
 func (u *User) CheckDebit(amount int64) error {
@@ -60,6 +61,7 @@ func (u *User) Debit(amount int64) error {
 		return InsufficientBalanceErr
 	}
 	u.balance -= amount
+	u.UpdatedAt = time.Now().UTC()
 	return nil
 }
 
@@ -68,6 +70,7 @@ func (u *User) Deposit(amount int64) error {
 	defer u.mu.Unlock()
 	if amount > 0 {
 		u.balance += amount
+		u.UpdatedAt = time.Now().UTC()
 	}
 	return nil
 }
