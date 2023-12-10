@@ -21,18 +21,18 @@ type User struct {
 	Password  string
 	UserType  UserType
 	ID        int64
-	Balance   int64
+	balance   int64
 	mu        sync.Mutex
 }
 
-func NewUser() *User {
-	return &User{}
+func NewUser(initialBalance int64) *User {
+	return &User{balance: initialBalance}
 }
 
 func (u *User) CheckDebit(amount int64) error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	if u.Balance-amount < 0 {
+	if u.balance-amount < 0 {
 		return InsufficientBalanceErr
 	}
 	return nil
@@ -41,11 +41,11 @@ func (u *User) CheckDebit(amount int64) error {
 func (u *User) IsValid() error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	if u.Balance < 0 {
-		return BalanceLessThanZeroErr
-	}
 	if u.UserType == UserType("") {
 		return UsertTypeRequiredErr
+	}
+	if u.balance < 0 {
+		return BalanceLessThanZeroErr
 	}
 	return nil
 }
@@ -53,9 +53,27 @@ func (u *User) IsValid() error {
 func (u *User) Debit(amount int64) error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
-	if u.Balance-amount < 0 {
+	if u.UserType == UserType(Merchant) {
+		return DebitNotAllowedErr
+	}
+	if u.balance-amount < 0 {
 		return InsufficientBalanceErr
 	}
-	u.Balance -= amount
+	u.balance -= amount
 	return nil
+}
+
+func (u *User) Deposit(amount int64) error {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	if amount > 0 {
+		u.balance += amount
+	}
+	return nil
+}
+
+func (u *User) GetBalance() int64 {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	return u.balance
 }
