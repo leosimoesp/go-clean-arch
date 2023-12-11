@@ -30,15 +30,6 @@ func NewUser(initialBalance int64) *User {
 	return &User{balance: initialBalance, CreatedAt: now, UpdatedAt: now}
 }
 
-func (u *User) CheckDebit(amount int64) error {
-	u.mu.Lock()
-	defer u.mu.Unlock()
-	if u.balance-amount < 0 {
-		return InsufficientBalanceErr
-	}
-	return nil
-}
-
 func (u *User) IsValid() error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
