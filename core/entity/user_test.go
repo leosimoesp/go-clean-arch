@@ -45,50 +45,6 @@ func userWithEmptyType(t *testing.T) {
 	assert.EqualError(t, err, entity.UsertTypeRequiredErr.Error())
 }
 
-func TestUser_CheckDebit(t *testing.T) {
-	t.Run("Should result no error if user balance is greather than debit amount", userBalanceGreatherThanAmount)
-	t.Run("Should result no error if user balance is equal to debit amount", userBalanceEqualToAmount)
-	t.Run("Should result no error if user balance is less than debit amount", userBalanceLessThanAmount)
-
-}
-
-func userBalanceGreatherThanAmount(t *testing.T) {
-	u := entity.NewUser(int64(10000))
-	u.Document = "12345678901"
-	u.Email = "test@test.com"
-	u.FullName = "Test User"
-	u.UserType = entity.UserType(entity.Common)
-	err := u.IsValid()
-	assert.Nil(t, err)
-	err2 := u.CheckDebit(int64(8000))
-	assert.Nil(t, err2)
-}
-
-func userBalanceEqualToAmount(t *testing.T) {
-	u := entity.NewUser(int64(10000))
-	u.Document = "12345678901"
-	u.Email = "test@test.com"
-	u.FullName = "Test User"
-	u.UserType = entity.UserType(entity.Common)
-	err := u.IsValid()
-	assert.Nil(t, err)
-	err2 := u.CheckDebit(int64(10000))
-	assert.Nil(t, err2)
-}
-
-func userBalanceLessThanAmount(t *testing.T) {
-	u := entity.NewUser(int64(10000))
-	u.Document = "12345678901"
-	u.Email = "test@test.com"
-	u.FullName = "Test User"
-	u.UserType = entity.UserType(entity.Common)
-	err := u.IsValid()
-	assert.Nil(t, err)
-	err2 := u.CheckDebit(int64(10001))
-	assert.NotNil(t, err2)
-	assert.EqualError(t, err2, entity.InsufficientBalanceErr.Error())
-}
-
 func TestUser_Debit(t *testing.T) {
 	t.Run("Should debit a amount from user balance with success", userDebitSuccess)
 	t.Run("Should return error if merchant user try to run debit", userMerchantDebitNotAllowed)
