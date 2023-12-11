@@ -13,6 +13,11 @@ type Transaction struct {
 	Value        int64
 }
 
+type TransactionRepository interface {
+	Save(t Transaction) (int64, error)
+	LoadUser(id int64) (*User, error)
+}
+
 func NewTransaction() *Transaction {
 	now := time.Now().UTC()
 	return &Transaction{

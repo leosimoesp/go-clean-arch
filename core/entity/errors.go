@@ -11,4 +11,6 @@ var (
 	InvalidRecipientErr    = fmt.Errorf("invalid recipient")
 	InvalidAmountErr       = fmt.Errorf("invalid amount")
 	InvalidDateErr         = fmt.Errorf("invalid operation date")
+	UserNotFoundErr        = fmt.Errorf("user not found")
+	AuthorizationDeniedErr = fmt.Errorf("authorization denied")
 )
