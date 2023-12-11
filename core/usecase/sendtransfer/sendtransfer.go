@@ -36,8 +36,8 @@ type SendTransfer struct {
 	mu              sync.Mutex
 }
 
-func NewSendTransfer(tRepo entity.TransactionRepository) *SendTransfer {
-	return &SendTransfer{transactionRepo: tRepo}
+func NewSendTransfer(tRepo entity.TransactionRepository, auth Authorizer, msg Messager) *SendTransfer {
+	return &SendTransfer{transactionRepo: tRepo, authorizer: auth, messager: msg}
 }
 
 func (s *SendTransfer) Execute(in TransationInputDTO) (TransationOutputDTO, error) {
